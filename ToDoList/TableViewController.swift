@@ -6,22 +6,39 @@
 //
 
 import UIKit
+import CoreData
 
 
 
 class TableViewController: UITableViewController {
     
-    static var tasks: [Task] = [
-       Task(name: "eat", isDone: false),
-       Task(name: "sleep", isDone: false),
-       Task(name: "dance", isDone: false),
-       Task(name: "study", isDone: false),
-       Task(name: "play", isDone: false),
-       Task(name: "run", isDone: false),
-       Task(name: "wash dishes", isDone: false)
-    ]
+    var qtyOfCells = 0
+    
+    static var tasks: [Task] = []
 
     private lazy var addTaskBarButton = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .done , target: self, action: #selector(addTask))
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let context = getContext()
+        
+        let fetchRequest: NSFetchRequest<Task> = Task.fetchRequest()
+        
+        do  {
+            TableViewController.tasks = try context.fetch(fetchRequest)
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        }
+        
+        print(TableViewController.tasks)
+        
+    }
+    
+    private func getContext() -> NSManagedObjectContext {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.persistentContainer.viewContext
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +47,9 @@ class TableViewController: UITableViewController {
         self.navigationItem.title = "To Do list"
         self.navigationItem.rightBarButtonItem = addTaskBarButton
     }
+
+    
+    
     
     @objc func addTask() {
         let newTaskVC = NewTaskViewController()
@@ -51,12 +71,13 @@ class TableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.font = UIFont.systemFont(ofSize: 20, weight: .light)
-        cell.textLabel?.text = TableViewController.tasks[indexPath.row].name
-        if TableViewController.tasks[indexPath.row].isDone {
-            cell.backgroundColor = .systemGreen
-        } else {
-            cell.backgroundColor = .white
-        }
+        let task = TableViewController.tasks[indexPath.row]
+        cell.textLabel?.text = task.title
+//        if TableViewController.tasks[indexPath.row].isDone {
+//            cell.backgroundColor = .systemGreen
+//        } else {
+//            cell.backgroundColor = .white
+//        }
         return cell
     }
 
@@ -71,29 +92,49 @@ class TableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
             -> UISwipeActionsConfiguration? {
             let deleteAction = UIContextualAction(style: .destructive, title: nil) { (_, _, completionHandler) in
-                TableViewController.tasks.remove(at: indexPath.row)
+
+                let context = self.getContext()
+                let taskToDelete = TableViewController.tasks[indexPath.row]
+
+                context.delete(taskToDelete)
+                
+                do  {
+                    try context.save()
+                } catch let error as NSError {
+                    print(error.localizedDescription)
+                }
+                
+                let fetchRequest: NSFetchRequest<Task> = Task.fetchRequest()
+                
+                do  {
+                    TableViewController.tasks = try context.fetch(fetchRequest)
+                } catch let error as NSError {
+                    print(error.localizedDescription)
+                }
+                
                 tableView.deleteRows(at: [indexPath], with: .automatic)
-                print(TableViewController.tasks)
+
                 completionHandler(true)
             }
-                
+
                 deleteAction.image = UIImage(systemName: "trash")
                 deleteAction.backgroundColor = .systemRed
-                
-                let doneAction = UIContextualAction(style: .normal, title: nil) { _, _, completionHandler in
-                    let cell = tableView.cellForRow(at: indexPath)
-                    cell!.backgroundColor = .systemGreen
-                    TableViewController.tasks[indexPath.row].isDone = true
-                    completionHandler(true)
-                }
-            
-                doneAction.image = UIImage(systemName: "checkmark")
-                doneAction.backgroundColor = .systemGreen
-                
-            let configuration = UISwipeActionsConfiguration(actions: [deleteAction, doneAction])
+
+//                let doneAction = UIContextualAction(style: .normal, title: nil) { _, _, completionHandler in
+//                    let cell = tableView.cellForRow(at: indexPath)
+//                    cell!.backgroundColor = .systemGreen
+////                    TableViewController.tasks[indexPath.row].isDone
+//                    completionHandler(true)
+//                }
+//
+//                doneAction.image = UIImage(systemName: "checkmark")
+//                doneAction.backgroundColor = .systemGreen
+
+//            let configuration = UISwipeActionsConfiguration(actions: [deleteAction, doneAction])
+                let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
             return configuration
     }
-    
+
     
     
 //    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -109,13 +150,11 @@ class TableViewController: UITableViewController {
 //
 //        return [delete, more]
 //    }
-
-
-
 }
 
 extension TableViewController: NewTaskViewControllerDelegate {
     func refresh() {
+        print("reload")
         tableView.reloadData()
         }
         

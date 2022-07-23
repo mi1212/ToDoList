@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 protocol NewTaskViewControllerDelegate: AnyObject {
     func refresh()
@@ -92,12 +93,28 @@ class NewTaskViewController: UIViewController {
     }
     
     @objc func addTask() {
+        
+        
+        
+        
+        
+        
         if textFieldView.text != "" {
-            TableViewController.tasks.append(Task(name: textFieldView.text!, isDone: false))
+            let context = getContext()
+            guard let entity = NSEntityDescription.entity(forEntityName: "Task", in: context) else { return }
+            let taskObject = Task(entity: entity, insertInto: context)
+            taskObject.title = textFieldView.text
+            TableViewController.tasks.append(taskObject)
             self.view.endEditing(true)
             dismiss(animated: true, completion: nil)
             delegate?.refresh()
             print(TableViewController.tasks)
+            
+            do  {
+                try context.save()
+            } catch let error as NSError {
+                print(error.localizedDescription)
+            }
         } else {
             shake()
         }
@@ -114,6 +131,11 @@ class NewTaskViewController: UIViewController {
         animation.fromValue = NSValue(cgPoint: CGPoint(x: textFieldView.center.x - 10, y: textFieldView.center.y))
         animation.toValue = NSValue(cgPoint: CGPoint(x: textFieldView.center.x + 10, y: textFieldView.center.y))
         self.textFieldView.layer.add(animation, forKey: "position")
+    }
+    
+    private func getContext() -> NSManagedObjectContext {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.persistentContainer.viewContext
     }
 
 }
