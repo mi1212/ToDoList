@@ -19,7 +19,7 @@ class NewTaskViewController: UIViewController {
     private lazy var lableView: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "What you want to do in future"
+        label.text = "what do you want to plan"
         label.font = UIFont.systemFont(ofSize: 20, weight: .light)
         label.numberOfLines = 2
         return label
