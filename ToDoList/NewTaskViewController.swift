@@ -103,6 +103,7 @@ class NewTaskViewController: UIViewController {
             let context = getContext()
             guard let entity = NSEntityDescription.entity(forEntityName: "Task", in: context) else { return }
             let taskObject = Task(entity: entity, insertInto: context)
+            taskObject.isDone = false
             taskObject.title = textFieldView.text
             TableViewController.tasks.append(taskObject)
             self.view.endEditing(true)

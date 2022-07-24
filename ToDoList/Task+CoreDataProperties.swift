@@ -2,7 +2,7 @@
 //  Task+CoreDataProperties.swift
 //  ToDoList
 //
-//  Created by Mikhail Chuparnov on 23.07.2022.
+//  Created by Mikhail Chuparnov on 24.07.2022.
 //
 //
 
@@ -17,8 +17,8 @@ extension Task {
     }
 
     @NSManaged public var title: String?
+    @NSManaged public var isDone: Bool
 
-    
 }
 
 extension Task : Identifiable {
