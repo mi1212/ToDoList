@@ -93,12 +93,7 @@ class NewTaskViewController: UIViewController {
     }
     
     @objc func addTask() {
-        
-        
-        
-        
-        
-        
+   
         if textFieldView.text != "" {
             let context = getContext()
             guard let entity = NSEntityDescription.entity(forEntityName: "Task", in: context) else { return }
@@ -109,7 +104,6 @@ class NewTaskViewController: UIViewController {
             self.view.endEditing(true)
             dismiss(animated: true, completion: nil)
             delegate?.refresh()
-            print(TableViewController.tasks)
             
             do  {
                 try context.save()

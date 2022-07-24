@@ -152,7 +152,6 @@ class TableViewController: UITableViewController {
 
 extension TableViewController: NewTaskViewControllerDelegate {
     func refresh() {
-        print("reload")
         tableView.reloadData()
         }
         
