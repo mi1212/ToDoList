@@ -107,9 +107,18 @@ class TableViewController: UITableViewController {
 
                 let doneAction = UIContextualAction(style: .normal, title: nil) { _, _, completionHandler in
                     let cell = tableView.cellForRow(at: indexPath)
-                    cell!.backgroundColor = .systemGreen
                     
-                    task.isDone = true
+                    
+                    switch task.isDone {
+                    case true:
+                        task.isDone = false
+                        cell!.backgroundColor = .white
+                    case false:
+                        task.isDone = true
+                        cell!.backgroundColor = .systemGreen
+                    }
+                    
+                    
                     
                     do  {
                         try context.save()
