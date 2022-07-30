@@ -63,6 +63,7 @@ class NewTaskViewController: UIViewController {
         view.addSubview(textFieldView)
         view.addSubview(buttonView)
         view.addGestureRecognizer(tap)
+        textFieldView.becomeFirstResponder()
         
         NSLayoutConstraint.activate([
             lableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -113,9 +114,7 @@ class NewTaskViewController: UIViewController {
         } else {
             shake()
         }
-        
-        
-        
+                
     }
     
     func shake(duration timeDuration: Double = 0.07, repeat countRepeat: Float = 3){
