@@ -16,6 +16,8 @@
 		FDB3D35B288C112800988135 /* ToDoList.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FDB3D359288C112800988135 /* ToDoList.xcdatamodeld */; };
 		FDB3D35D288C112B00988135 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FDB3D35C288C112B00988135 /* Assets.xcassets */; };
 		FDB3D360288C112B00988135 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FDB3D35E288C112B00988135 /* LaunchScreen.storyboard */; };
+		FDC78F30289527D5009CDDA1 /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC78F2F289527D5009CDDA1 /* TaskTableViewCell.swift */; };
+		FDC78F322895281B009CDDA1 /* UIKit + Extention.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC78F312895281B009CDDA1 /* UIKit + Extention.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		FDB3D35C288C112B00988135 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FDB3D35F288C112B00988135 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FDB3D361288C112B00988135 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FDC78F2F289527D5009CDDA1 /* TaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
+		FDC78F312895281B009CDDA1 /* UIKit + Extention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIKit + Extention.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,11 +71,13 @@
 				FDB3D350288C112800988135 /* AppDelegate.swift */,
 				FDB3D352288C112800988135 /* SceneDelegate.swift */,
 				FD9D2C7F288C180A00515394 /* TableViewController.swift */,
+				FDC78F2F289527D5009CDDA1 /* TaskTableViewCell.swift */,
 				FD9D2C81288C22E000515394 /* NewTaskViewController.swift */,
 				FDB3D35C288C112B00988135 /* Assets.xcassets */,
 				FDB3D35E288C112B00988135 /* LaunchScreen.storyboard */,
 				FDB3D361288C112B00988135 /* Info.plist */,
 				FDB3D359288C112800988135 /* ToDoList.xcdatamodeld */,
+				FDC78F312895281B009CDDA1 /* UIKit + Extention.swift */,
 			);
 			path = ToDoList;
 			sourceTree = "<group>";
@@ -146,10 +152,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDC78F30289527D5009CDDA1 /* TaskTableViewCell.swift in Sources */,
 				FDB3D351288C112800988135 /* AppDelegate.swift in Sources */,
 				FD9D2C82288C22E100515394 /* NewTaskViewController.swift in Sources */,
 				FDB3D353288C112800988135 /* SceneDelegate.swift in Sources */,
 				FD9D2C80288C180A00515394 /* TableViewController.swift in Sources */,
+				FDC78F322895281B009CDDA1 /* UIKit + Extention.swift in Sources */,
 				FD61187F288D075600DA0F84 /* Task+CoreDataProperties.swift in Sources */,
 				FD61187E288D075600DA0F84 /* Task+CoreDataClass.swift in Sources */,
 				FDB3D35B288C112800988135 /* ToDoList.xcdatamodeld in Sources */,
@@ -291,6 +299,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VXMM262X54;
@@ -307,6 +316,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ru.MikhailChuparnov.ToDoList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -318,6 +328,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VXMM262X54;
@@ -334,6 +345,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ru.MikhailChuparnov.ToDoList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -350,7 +362,7 @@
 				FDB3D363288C112B00988135 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		FDB3D364288C112B00988135 /* Build configuration list for PBXNativeTarget "ToDoList" */ = {
 			isa = XCConfigurationList;
@@ -359,7 +371,7 @@
 				FDB3D366288C112B00988135 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 

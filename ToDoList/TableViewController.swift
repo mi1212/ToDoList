@@ -34,8 +34,11 @@ class TableViewController: UITableViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        self.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.identifire)
+        self.tableView.separatorStyle = .none
         self.navigationItem.title = "To Do list"
         self.navigationItem.rightBarButtonItem = addTaskBarButton
+        self.navigationItem.rightBarButtonItem?.tintColor = .black
     }
     
     // MARK: - @objc
@@ -51,13 +54,13 @@ class TableViewController: UITableViewController {
         return appDelegate.persistentContainer.viewContext
     }
     
-    private func makeStrikeText( title: String) -> NSMutableAttributedString {
+    func makeStrikeText( title: String) -> NSMutableAttributedString {
         let attributeString: NSMutableAttributedString =  NSMutableAttributedString(string: title)
         attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributeString.length))
         return attributeString
     }
     
-    private func makeNormalText( title: String) -> NSMutableAttributedString {
+    func makeNormalText( title: String) -> NSMutableAttributedString {
         let attributeString: NSMutableAttributedString =  NSMutableAttributedString(string: title)
         attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 0, range: NSMakeRange(0, attributeString.length))
         return attributeString
@@ -74,149 +77,54 @@ class TableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 20, weight: .light)
-        let task = TableViewController.tasks[indexPath.row]
-                
-        switch task.isDone {
-        case true:
-            cell.backgroundColor = .init(red: 0, green: 10, blue: 0, alpha: 0.4)
-            cell.textLabel?.layer.opacity = 0.5
-            cell.textLabel?.attributedText = self.makeStrikeText(title: task.title!)
-        case false:
-            cell.backgroundColor = .white
-            cell.textLabel?.layer.opacity = 1
-            cell.textLabel?.attributedText = self.makeNormalText(title: task.title!)
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.identifire, for: indexPath) as! TaskTableViewCell
         
+        cell.setupCell(indexPath: indexPath, title: TableViewController.tasks[indexPath.row].title!, isDone: TableViewController.tasks[indexPath.row].isDone, indexPathOfCell: indexPath)
+        cell.delegate = self
         return cell
     }
     
-//    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//
-//        let cell = tableView.cellForRow(at: indexPath)
-//        let context = self.getContext()
-//        let task = TableViewController.tasks[indexPath.row]
-//
-//        let editAction = UIContextualAction(style: .destructive, title: nil) {
-//            (_, _, completionHandler) in
-//
-//
-//            let textFieldView: UITextField = {
-//                let text = UITextField(frame: CGRect(x: 0, y: 0, width: ((cell?.bounds.width)!), height: (cell?.bounds.height)!))
-//                text.backgroundColor = .white
-//                let leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 2))
-//                text.font = UIFont.systemFont(ofSize: 20, weight: .light)
-//                text.leftView = leftView
-//                text.rightView = leftView
-//                text.leftViewMode = .always
-//                text.rightViewMode = .always
-//                text.placeholder = "edit your task"
-//                text.becomeFirstResponder()
-//                return text
-//            }()
-//
-//
-//            cell?.addSubview(textFieldView)
-////            textFieldView.resignFirstResponder()
-//
-//            textFieldView.becomeFirstResponder()
-//        }
-//
-//        editAction.image = UIImage(systemName: "pencil")
-//        editAction.title = "edit"
-//        editAction.backgroundColor = UIColor.systemOrange
-//
-//        let configuration = UISwipeActionsConfiguration(actions: [editAction])
-//
-//        return configuration
-//
-//    }
-    
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
     -> UISwipeActionsConfiguration? {
-        
+
         let context = self.getContext()
         let task = TableViewController.tasks[indexPath.row]
-        
+
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { (_, _, completionHandler) in
-            
+
             context.delete(task)
-            
+
             do  {
                 try context.save()
             } catch let error as NSError {
                 print(error.localizedDescription)
             }
-            
+
             let fetchRequest: NSFetchRequest<Task> = Task.fetchRequest()
-            
+
             do  {
                 TableViewController.tasks = try context.fetch(fetchRequest)
             } catch let error as NSError {
                 print(error.localizedDescription)
             }
-            
+
             tableView.deleteRows(at: [indexPath], with: .automatic)
-            
+
             completionHandler(true)
         }
-        
+
         deleteAction.image = UIImage(systemName: "trash")
         deleteAction.backgroundColor = .systemRed
-        
-        let doneAction = UIContextualAction(style: .normal, title: nil) { _, _, completionHandler in
-            let cell = tableView.cellForRow(at: indexPath)!
-            
-            let attributeString: NSMutableAttributedString =  NSMutableAttributedString(string: task.title!)
-            attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributeString.length))
-            
-            switch task.isDone {
-            case true:
-                task.isDone = false
-                cell.backgroundColor = .white
-                cell.textLabel?.attributedText = self.makeNormalText(title: task.title!)
-                cell.textLabel?.layer.opacity = 1
-                
-                
-            case false:
-                task.isDone = true
-                cell.backgroundColor = .init(red: 0, green: 1, blue: 0, alpha: 0.4)
-                
-                cell.textLabel?.attributedText = self.makeStrikeText(title: task.title!)
-                cell.textLabel?.layer.opacity = 0.5
-                
-            }
-            
-            
-            
-            do  {
-                try context.save()
-            } catch let error as NSError {
-                print(error.localizedDescription)
-            }
-            
-            let fetchRequest: NSFetchRequest<Task> = Task.fetchRequest()
-            
-            do  {
-                TableViewController.tasks = try context.fetch(fetchRequest)
-            } catch let error as NSError {
-                print(error.localizedDescription)
-            }
-            
-            completionHandler(true)
-        }
-        
-        doneAction.image = UIImage(systemName: "checkmark")
-        doneAction.backgroundColor = .systemGreen
-        
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, doneAction])
+
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
         return configuration
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        let cell = tableView.cellForRow(at: indexPath) as! TaskTableViewCell
+        cell.selectionStyle = .none
     }
+
 }
 
 extension TableViewController: NewTaskViewControllerDelegate {
@@ -224,6 +132,70 @@ extension TableViewController: NewTaskViewControllerDelegate {
         tableView.reloadData()
     }
     
+}
+
+extension TableViewController: TaskTableViewCellDelegate {
+    func tapTask(indexPath: IndexPath) {
+        
+        let context = self.getContext()
+        let task = TableViewController.tasks[indexPath.row]
+        
+        let cell = tableView.cellForRow(at: indexPath) as! TaskTableViewCell
+        
+        switch task.isDone {
+        case true:
+            task.isDone = false
+            
+            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
+                cell.backgroundColor = .white
+                cell.textView.attributedText = self.makeNormalText(title: task.title!)
+                cell.textView.layer.opacity = 1
+                cell.tickImageView.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+                cell.tickImageView.layer.opacity = 0.6
+            } completion: { _ in
+                UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) {
+                    cell.tickImageView.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    cell.tickImageView.image = UIImage(named: "circle_rounded")
+                    cell.tickImageView.layer.opacity = 1
+                }
+            }
+
+            
+        case false:
+            task.isDone = true
+            
+            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
+                cell.backgroundColor = .init(red: 0, green: 1, blue: 0, alpha: 0.4)
+                cell.textView.attributedText = self.makeStrikeText(title: task.title!)
+                cell.textView.layer.opacity = 0.5
+                cell.tickImageView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+                cell.tickImageView.layer.opacity = 0.6
+            } completion: { _ in
+                UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) {
+                    cell.tickImageView.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    cell.tickImageView.layer.opacity = 1
+                    cell.tickImageView.image = UIImage(named: "circle_straight")
+                }
+            }
+            
+            
+            
+        }
+        
+        do  {
+            try context.save()
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        }
+        
+        let fetchRequest: NSFetchRequest<Task> = Task.fetchRequest()
+        
+        do  {
+            TableViewController.tasks = try context.fetch(fetchRequest)
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
 }
 
 
