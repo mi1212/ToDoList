@@ -21,14 +21,15 @@ class NewTaskViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "what do you want to plan"
         label.font = UIFont.systemFont(ofSize: 20, weight: .light)
+        label.textColor = UIColor(named: "textColor")
         label.numberOfLines = 2
         return label
     }()
     
     private lazy var textFieldView: UITextField = {
         let text = UITextField()
-        text.backgroundColor = .white
-        text.layer.borderColor = UIColor.black.cgColor
+        text.backgroundColor = UIColor(named: "backgroundColor")
+        text.layer.borderColor = UIColor(named: "textColor")?.cgColor
         text.layer.borderWidth = 1
         text.layer.cornerRadius = 10
         let leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 2))
@@ -37,6 +38,7 @@ class NewTaskViewController: UIViewController {
         text.leftViewMode = .always
         text.rightViewMode = .always
         text.text = nil
+        text.textColor = UIColor(named: "textColor")
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
     }()
@@ -45,7 +47,8 @@ class NewTaskViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("add", for: .normal)
-        button.backgroundColor = .systemIndigo
+        button.backgroundColor = UIColor(named: "textColor")
+        button.setTitleColor(UIColor(named: "backgroundColor"), for: .normal)
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(addTask), for: .touchUpInside)
@@ -54,7 +57,7 @@ class NewTaskViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = UIColor(named: "backgroundColor")
         setup()
     }
     

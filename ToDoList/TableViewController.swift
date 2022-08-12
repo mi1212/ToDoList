@@ -32,13 +32,14 @@ class TableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = UIColor(named: "backgroundColor")
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         self.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.identifire)
         self.tableView.separatorStyle = .none
+        self.tableView.isEditing = false
         self.navigationItem.title = "To Do list"
         self.navigationItem.rightBarButtonItem = addTaskBarButton
-        self.navigationItem.rightBarButtonItem?.tintColor = .black
+        self.navigationItem.rightBarButtonItem?.tintColor = UIColor(named: "textColor")
     }
     
     // MARK: - @objc
@@ -91,7 +92,7 @@ class TableViewController: UITableViewController {
         let task = TableViewController.tasks[indexPath.row]
 
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { (_, _, completionHandler) in
-
+            
             context.delete(task)
 
             do  {
@@ -109,10 +110,11 @@ class TableViewController: UITableViewController {
             }
 
             tableView.deleteRows(at: [indexPath], with: .automatic)
-
+ 
             completionHandler(true)
+        
         }
-
+        
         deleteAction.image = UIImage(systemName: "trash")
         deleteAction.backgroundColor = .systemRed
 
@@ -123,6 +125,14 @@ class TableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! TaskTableViewCell
         cell.selectionStyle = .none
+    }
+    
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        .none
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        false
     }
 
 }
@@ -141,13 +151,12 @@ extension TableViewController: TaskTableViewCellDelegate {
         let task = TableViewController.tasks[indexPath.row]
         
         let cell = tableView.cellForRow(at: indexPath) as! TaskTableViewCell
-        
+        cell.indexPathOfCell = indexPath
         switch task.isDone {
         case true:
             task.isDone = false
             
-            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
-                cell.backgroundColor = .white
+            UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) {
                 cell.textView.attributedText = self.makeNormalText(title: task.title!)
                 cell.textView.layer.opacity = 1
                 cell.tickImageView.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
@@ -157,30 +166,30 @@ extension TableViewController: TaskTableViewCellDelegate {
                     cell.tickImageView.transform = CGAffineTransform(scaleX: 1, y: 1)
                     cell.tickImageView.image = UIImage(named: "circle_rounded")
                     cell.tickImageView.layer.opacity = 1
+                    self.tableView.reloadData()
                 }
             }
-
+            
             
         case false:
             task.isDone = true
             
-            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
-                cell.backgroundColor = .init(red: 0, green: 1, blue: 0, alpha: 0.4)
+            UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) {
                 cell.textView.attributedText = self.makeStrikeText(title: task.title!)
                 cell.textView.layer.opacity = 0.5
-                cell.tickImageView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+                cell.tickImageView.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
                 cell.tickImageView.layer.opacity = 0.6
             } completion: { _ in
                 UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut) {
                     cell.tickImageView.transform = CGAffineTransform(scaleX: 1, y: 1)
                     cell.tickImageView.layer.opacity = 1
                     cell.tickImageView.image = UIImage(named: "circle_straight")
+                    self.tableView.reloadData()
                 }
             }
-            
-            
-            
         }
+        
+        
         
         do  {
             try context.save()
