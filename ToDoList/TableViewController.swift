@@ -10,8 +10,12 @@ import CoreData
 
 
 class TableViewController: UITableViewController {
+    
     // MARK: - Properts
+    
     static var tasks: [Task] = []
+    
+    private var timer: Timer?
     
     private lazy var addTaskBarButton = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .done , target: self, action: #selector(addTask))
     
@@ -43,6 +47,7 @@ class TableViewController: UITableViewController {
     }
     
     // MARK: - @objc
+    
     @objc func addTask() {
         let newTaskVC = NewTaskViewController()
         newTaskVC.delegate = self
@@ -50,6 +55,7 @@ class TableViewController: UITableViewController {
     }
     
     // MARK: - Funcs
+    
     private func getContext() -> NSManagedObjectContext {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         return appDelegate.persistentContainer.viewContext
@@ -91,7 +97,7 @@ class TableViewController: UITableViewController {
         let context = self.getContext()
         let task = TableViewController.tasks[indexPath.row]
 
-        let deleteAction = UIContextualAction(style: .destructive, title: nil) { (_, _, completionHandler) in
+        let deleteAction = UIContextualAction(style: .normal, title: nil) { (_, _, completionHandler) in
             
             context.delete(task)
 
@@ -108,10 +114,12 @@ class TableViewController: UITableViewController {
             } catch let error as NSError {
                 print(error.localizedDescription)
             }
-
-            tableView.deleteRows(at: [indexPath], with: .automatic)
- 
             completionHandler(true)
+            tableView.deleteRows(at: [indexPath], with: .left)
+           
+            self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: { _ in
+                tableView.reloadData()
+            })
         
         }
         
@@ -152,6 +160,7 @@ extension TableViewController: TaskTableViewCellDelegate {
         
         let cell = tableView.cellForRow(at: indexPath) as! TaskTableViewCell
         cell.indexPathOfCell = indexPath
+        
         switch task.isDone {
         case true:
             task.isDone = false
@@ -170,7 +179,6 @@ extension TableViewController: TaskTableViewCellDelegate {
                 }
             }
             
-            
         case false:
             task.isDone = true
             
@@ -188,8 +196,6 @@ extension TableViewController: TaskTableViewCellDelegate {
                 }
             }
         }
-        
-        
         
         do  {
             try context.save()
